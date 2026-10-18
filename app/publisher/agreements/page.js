@@ -25,8 +25,8 @@ export default async function Agreements() {
   const current = (versions || [])[0];
   const accepted = v => (acc || []).find(a => a.version_id === v.id);
   return (
-    <section className="page">
-      <div><div className="eyebrow">Living documents</div><h1>Agreements and paperwork</h1><p className="note">The current agreement is always shown here. When terms change, you accept the new version at login; every version you've signed stays on file with the date.</p></div>
+    <main className="content gutter"><div className="wrap section">
+      <div><div className="kicker">Living documents</div><h1>Agreements and paperwork</h1><p className="note">The current agreement is always shown here. When terms change, you accept the new version at login; every version you've signed stays on file with the date.</p></div>
       <div className="grid2">
         <div className="panel"><header><h2>Distribution agreement</h2>{current && (accepted(current) ? <span className="pill ok">v{current.version} · signed {date(accepted(current).accepted_at)}</span> : <span className="pill wait">v{current.version} · not yet accepted</span>)}</header>
           {current ? <>
@@ -45,6 +45,6 @@ export default async function Agreements() {
             <p className="note" style={{ marginTop: 10 }}>Document uploads are coming. For now, email your W-9 to hello@elderbraingames.com.</p></div>
         </div>
       </div>
-    </section>
+    </div></main>
   );
 }

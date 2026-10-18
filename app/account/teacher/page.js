@@ -12,8 +12,9 @@ export default async function Teacher() {
   const quotes = orders.filter(o => o.kind === 'quote' && ['quote_sent', 'approved', 'po_received'].includes(o.status));
   const owned = orders.filter(o => ['paid', 'shipped', 'delivered'].includes(o.status)).reduce((a, o) => a + (o.order_lines || []).reduce((b, l) => b + l.qty, 0), 0);
   return (
-    <section className="page">
-      <div><div className="eyebrow">Teacher account · {profile.orgs?.name}</div><h1>Your classroom</h1></div>
+    <main className="content gutter"><div className="wrap section">
+      <div><div className="kicker">Teacher account · {profile.orgs?.name}</div><h1>Your classroom</h1></div>
+      <p className="opening">{quotes.length ? `${quotes.length === 1 ? 'One quote is' : quotes.length + ' quotes are'} waiting for your office. ${owned ? owned + ' games are in your classroom.' : 'Add games from the catalog to start a quote.'}` : owned ? `${owned} games in your classroom, ${plans.length} lesson plans unlocked.` : 'Nothing in motion yet. Add games from the catalog and we will turn it into a quote your office can approve.'}</p>
       <Stats items={[[quotes.length, 'Quotes awaiting your office'], [owned, 'Games in your classroom'], [plans.length, 'Lesson plans unlocked']]} />
       <div className="grid2">
         <div className="panel"><header><h2>Quotes and orders</h2><Link href="/catalog" className="btn ghost">New quote</Link></header>
@@ -28,6 +29,6 @@ export default async function Teacher() {
           {cons.slice(0, 3).map(c => <div className="con" key={c.id}><div className="date">{new Date(c.starts_on + 'T12:00').getDate()}<small>{new Date(c.starts_on + 'T12:00').toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}</small></div><div><b>{c.name}</b><span className="note">{c.city}. Come play at our table.</span></div></div>)}
         </div>
       </div>
-    </section>
+    </div></main>
   );
 }

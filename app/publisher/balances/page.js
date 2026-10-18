@@ -9,12 +9,12 @@ const KIND = { dropship_sale: 'Drop ship', consignment_sale: 'Consignment', whol
 export default async function Balances() {
   const { supabase, profile } = await getSession();
   const pub = await loadPublisher(supabase, profile);
-  if (!pub) return <section className="page"><Empty>No publisher record yet.</Empty></section>;
+  if (!pub) return <main className="content gutter"><div className="wrap section"><Empty>No publisher record yet.</Empty></div></main>;
   const [entries, { data: payouts }] = await Promise.all([ledger(supabase, pub.id), supabase.from('payouts').select('*').eq('publisher_id', pub.id).order('paid_at', { ascending: false })]);
   const b = balances(entries);
   return (
-    <section className="page">
-      <div><div className="eyebrow">Ledger</div><h1>Balances and payouts</h1><p className="note">Every number here comes from a ledger entry. Statements always reconcile to this list.</p></div>
+    <main className="content gutter"><div className="wrap section">
+      <div><div className="kicker">Ledger</div><h1>Balances and payouts</h1><p className="note">Every number here comes from a ledger entry. Statements always reconcile to this list.</p></div>
       <Stats items={[[money(b.ready), 'Ready to pay'], [money(b.waiting), 'Waiting on school payment'], [money((payouts || []).reduce((a, p) => a + Number(p.amount), 0)), 'Paid to you, lifetime']]} />
       <div className="panel"><header><h2>Entries</h2></header>
         {entries.length ? <div className="tbl"><table><thead><tr><th>Date</th><th>Entry</th><th>Type</th><th className="r">Gross</th><th className="r">EBG cut</th><th className="r">Yours</th><th>Status</th></tr></thead><tbody>
@@ -24,6 +24,6 @@ export default async function Balances() {
         {(payouts || []).length ? <div className="tbl"><table><thead><tr><th>Date</th><th>Method</th><th>Reference</th><th className="r">Amount</th></tr></thead><tbody>
           {payouts.map(p => <tr key={p.id}><td>{date(p.paid_at)}</td><td>{p.method}</td><td>{p.reference}</td><td className="r">{money(p.amount)}</td></tr>)}
         </tbody></table></div> : <Empty>Payouts run on the last business day of each month for anything marked ready.</Empty>}</div>
-    </section>
+    </div></main>
   );
 }

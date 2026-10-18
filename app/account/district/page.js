@@ -14,8 +14,9 @@ export default async function District() {
   const open = orders.filter(o => ['approved', 'po_received', 'shipped', 'delivered'].includes(o.status) && !o.paid_at);
   const openTotal = open.reduce((a, o) => a + Number(o.total), 0);
   return (
-    <section className="page">
-      <div><div className="eyebrow">District account · {profile.orgs?.name}</div><h1>Purchasing</h1></div>
+    <main className="content gutter"><div className="wrap section">
+      <div><div className="kicker">District account · {profile.orgs?.name}</div><h1>Purchasing</h1></div>
+      <p className="opening">{pending.length ? `${pending.length} quote${pending.length > 1 ? 's' : ''} waiting for your approval, ${money(openTotal)} in open invoices.` : open.length ? `Nothing to approve. ${money(openTotal)} in open invoices.` : 'Nothing waiting. Quotes your teachers request show up here.'}</p>
       <Stats items={[[pending.length, 'Quotes to approve'], [money(openTotal), 'Open invoices'], [profile.orgs?.tax_exempt ? 'On file' : 'Needed', 'Tax-exempt certificate']]} />
       <div className="grid2">
         <div className="panel"><header><h2>Quotes awaiting approval</h2></header>
@@ -34,6 +35,6 @@ export default async function District() {
           </tbody></table></div></div>
         <div className="panel"><header><h2>Bulk order</h2></header><p className="note">Order kits for several buildings at once and we'll split shipments and invoices by building.</p><Link href="/catalog" className="btn" style={{ marginTop: 12 }}>Start a bulk order</Link></div>
       </div>
-    </section>
+    </div></main>
   );
 }

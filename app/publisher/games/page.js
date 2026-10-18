@@ -9,14 +9,14 @@ export const metadata = { title: 'My games' };
 export default async function MyGames() {
   const { supabase, profile } = await getSession();
   const pub = await loadPublisher(supabase, profile);
-  if (!pub) return <section className="page"><Empty>No publisher record yet.</Empty></section>;
+  if (!pub) return <main className="content gutter"><div className="wrap section"><Empty>No publisher record yet.</Empty></div></main>;
   const [{ data: games }, { data: apps }] = await Promise.all([
     supabase.from('games').select('*').eq('publisher_id', pub.id).order('title'),
     supabase.from('applications').select('*, scorecards(*)').eq('publisher_id', pub.id).order('created_at', { ascending: false }),
   ]);
   return (
-    <section className="page">
-      <div><div className="eyebrow">Catalog</div><h1>My games</h1></div>
+    <main className="content gutter"><div className="wrap section">
+      <div><div className="kicker">Catalog</div><h1>My games</h1></div>
       <div className="grid2">
         {(games || []).map(g => (
           <div className="panel lift" key={g.id}><header><h3>{g.title}</h3>{g.approved && <span className="stamp" style={{ fontSize: '.7rem' }}>Approved</span>}</header>
@@ -39,6 +39,6 @@ export default async function MyGames() {
         })}
         <div className="panel" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', gap: 10, borderStyle: 'dashed' }}><h3>Submit another game</h3><p className="note">Approved publishers skip the queue for review slots.</p><Link href="/publishers#apply" className="btn">New application</Link></div>
       </div>
-    </section>
+    </div></main>
   );
 }

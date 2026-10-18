@@ -11,8 +11,9 @@ export default async function Nonprofit() {
   const [orders, cons] = await Promise.all([orgOrders(supabase, profile.org_id), upcomingCons(supabase)]);
   const owned = orders.filter(o => ['paid', 'shipped', 'delivered'].includes(o.status)).reduce((a, o) => a + (o.order_lines || []).reduce((b, l) => b + l.qty, 0), 0);
   return (
-    <section className="page">
-      <div><div className="eyebrow">Library and non-profit account · {profile.orgs?.name}</div><h1>Programs and lending</h1></div>
+    <main className="content gutter"><div className="wrap section">
+      <div><div className="kicker">Library and non-profit account · {profile.orgs?.name}</div><h1>Programs and lending</h1></div>
+      <p className="opening">{owned ? `${owned} games in your collection.` : 'Start a quote from the catalog, or email us about a lending box.'}</p>
       <Stats items={[[owned, 'Games in your collection'], [orders.filter(o => o.status === 'quote_sent').length, 'Quotes in progress'], [profile.orgs?.tax_exempt ? 'On file' : 'Needed', 'Tax-exempt letter']]} />
       <div className="grid2">
         <div className="panel"><header><h2>Quotes and orders</h2><Link href="/catalog" className="btn ghost">New quote</Link></header>
@@ -27,6 +28,6 @@ export default async function Nonprofit() {
         <div className="panel"><header><h2>Where we'll be</h2></header>
           {cons.slice(0, 3).map(c => <div className="con" key={c.id}><div className="date">{new Date(c.starts_on + 'T12:00').getDate()}<small>{new Date(c.starts_on + 'T12:00').toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}</small></div><div><b>{c.name}</b><span className="note">{c.city} · {c.audience}</span></div></div>)}</div>
       </div>
-    </section>
+    </div></main>
   );
 }

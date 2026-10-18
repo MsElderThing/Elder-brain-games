@@ -27,14 +27,14 @@ function Form() {
 
 export default function SignIn() {
   return (
-    <section className="page">
-      <div><div className="eyebrow">Sign in</div><h1>Welcome back</h1></div>
+    <main className="content gutter"><div className="wrap section">
+      <div><div className="kicker">Sign in</div><h1>Welcome back</h1></div>
       <div className="grid2">
         <div className="panel"><header><h2>Sign in</h2></header><Suspense><Form /></Suspense></div>
         <div className="panel"><header><h2>New here?</h2></header>
           <p className="note">Teachers, districts, libraries, and families create an account to check out and see their dashboard. Publishers start on the publisher page.</p>
           <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}><Link href="/signup" className="btn">Create an account</Link><Link href="/publishers" className="btn ghost">I'm a publisher</Link></div></div>
       </div>
-    </section>
+    </div></main>
   );
 }

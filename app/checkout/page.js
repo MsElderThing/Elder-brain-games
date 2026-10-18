@@ -8,16 +8,16 @@ export default async function Checkout() {
   const { profile } = await getSession();
   if (!profile) {
     return (
-      <section className="page">
-        <div><div className="eyebrow">Checkout</div><h1>Create an account to check out</h1></div>
+      <main className="content gutter"><div className="wrap section">
+        <div><div className="kicker">Checkout</div><h1>Create an account to check out</h1></div>
         <div className="panel"><SignUpForm next="/checkout" note="Schools, districts, and libraries get a PO-ready quote with our W-9. Families pay by card." /></div>
-      </section>
+      </div></main>
     );
   }
   return (
-    <section className="page">
-      <div><div className="eyebrow">Checkout</div><h1>{profile.role === 'individual' ? 'Pay by card' : 'Request a quote'}</h1></div>
+    <main className="content gutter"><div className="wrap section">
+      <div><div className="kicker">Checkout</div><h1>{profile.role === 'individual' ? 'Pay by card' : 'Request a quote'}</h1></div>
       <CheckoutForm profile={profile} />
-    </section>
+    </div></main>
   );
 }

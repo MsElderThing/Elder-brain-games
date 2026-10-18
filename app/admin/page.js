@@ -20,8 +20,9 @@ export default async function Admin() {
   const owed = (ledger || []).filter(e => e.status === 'ready').reduce((a, e) => a + Number(e.net_to_publisher), 0);
   const openInv = (orders || []).filter(o => ['approved', 'po_received', 'shipped', 'delivered'].includes(o.status) && !o.paid_at);
   return (
-    <section className="page">
-      <div><div className="eyebrow">Elder Brain only</div><h1>Admin</h1></div>
+    <main className="content gutter"><div className="wrap section">
+      <div><div className="kicker">Elder Brain only</div><h1>Admin</h1></div>
+      <p className="opening">{`${(apps || []).filter(a => !['accepted','declined'].includes(a.status)).length} applications to review, ${money(owed)} owed to publishers, ${openInv.length} open school invoices.`}</p>
       <Stats items={[[(apps || []).filter(a => a.status !== 'accepted' && a.status !== 'declined').length, 'Applications to review'], [money(owed), 'Owed to publishers'], [money(openInv.reduce((a, o) => a + Number(o.total), 0)), 'Open school invoices'], [(games || []).filter(g => g.approved).length, 'Approved games'], [(pubs || []).length, 'Publishers']]} />
       <div className="grid2">
         <div className="panel"><header><h2>Review queue</h2></header>
@@ -40,6 +41,6 @@ export default async function Admin() {
         <div className="panel"><header><h2>Payout run</h2></header>
           <p className="note">{money(owed)} ready across {new Set((ledger || []).filter(e => e.status === 'ready').map(e => e.publisher_id)).size} publishers. Payout batching and statements come with the Square connection.</p></div>
       </div>
-    </section>
+    </div></main>
   );
 }

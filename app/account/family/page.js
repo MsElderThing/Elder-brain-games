@@ -11,8 +11,9 @@ export default async function Family() {
   const [orders, plans] = await Promise.all([orgOrders(supabase, profile.org_id), ownedLessonPlans(supabase)]);
   const owned = orders.filter(o => ['paid', 'shipped', 'delivered'].includes(o.status)).reduce((a, o) => a + (o.order_lines || []).reduce((b, l) => b + l.qty, 0), 0);
   return (
-    <section className="page">
-      <div><div className="eyebrow">Family account</div><h1>Your orders</h1></div>
+    <main className="content gutter"><div className="wrap section">
+      <div><div className="kicker">Family account</div><h1>Your orders</h1></div>
+      <p className="opening">{orders.length ? `${orders.length} order${orders.length > 1 ? 's' : ''} so far, ${plans.length} lesson plans unlocked.` : 'No orders yet. Every game you buy unlocks its homeschool lesson plan here.'}</p>
       <Stats items={[[orders.filter(o => o.status === 'paid' || o.status === 'shipped').length, 'On the way'], [owned, 'Games owned'], [plans.length, 'Lesson plans']]} />
       <div className="grid2">
         <div className="panel"><header><h2>Orders</h2><Link href="/catalog" className="btn ghost">Shop</Link></header>
@@ -24,6 +25,6 @@ export default async function Family() {
         <div className="panel"><header><h2>Lesson plans</h2></header>
           {plans.length ? <div className="tbl"><table><tbody>{plans.map(p => <tr key={p.id}><td className="k">{p.games?.title}</td><td>{p.title}</td></tr>)}</tbody></table></div> : <Empty>Unlocks with your first order.</Empty>}</div>
       </div>
-    </section>
+    </div></main>
   );
 }

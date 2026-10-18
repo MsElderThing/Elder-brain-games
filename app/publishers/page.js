@@ -12,8 +12,8 @@ export default async function Publishers() {
   const slots = (cons || []).reduce((a, c) => a + (c.demo_slots || 0), 0);
   const next = (cons || [])[0];
   return (
-    <section className="page">
-      <div className="hero">
+    <main className="content gutter ink" style={{ background: 'var(--bg)', color: 'var(--fg)', marginBottom: -72, paddingBottom: 72 }}><div className="wrap section">
+      <div className="handbill">
         <Tentacles />
         <div className="top"><div className="corner">Elder Brain Games · Publisher program</div><div className="tag"><span className="stamp">Now recruiting</span></div></div>
         <h1>Bring us<br />your game.<span className="alt">we'll get it into</span>classrooms.</h1>
@@ -22,11 +22,17 @@ export default async function Publishers() {
         <div className="fine">{slots} demo slots open{next ? ` · next round: ${next.name}, ${new Date(next.starts_on).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : ''}</div>
       </div>
 
-      <div className="steps">
-        <div className="step"><div className="num">1</div><b>Apply</b>Game, ages, play time, MSRP, photos. Pick a slot.</div>
-        <div className="step"><div className="num">2</div><b>Demo</b>Video call, at our con table, or mail us a copy.</div>
-        <div className="step"><div className="num">3</div><b>Get scored</b>Every game gets a published scorecard back.</div>
-        <div className="step"><div className="num">4</div><b>Sign and sell</b>Paperwork online. Portal unlocks sales, payouts, cons.</div>
+      <div className="proof">
+        <img src="/img/con.jpg" alt="Our con table" />
+        <img src="/img/detail-board.jpg" alt="A demo in progress" />
+        <img src="/img/detail-cards.jpg" alt="Scorecards" />
+      </div>
+
+      <div className="flow">
+        <div><b>Apply</b><span>Game, ages, play time, MSRP, photos. Pick a slot.</span></div>
+        <div><b>Demo</b><span>Video call, at our con table, or mail us a copy.</span></div>
+        <div><b>Get scored</b><span>Every game gets a published scorecard back, win or not.</span></div>
+        <div><b>Sign and sell</b><span>Paperwork online. Portal unlocks sales, payouts, cons.</span></div>
       </div>
 
       <div className="grid2">
@@ -36,7 +42,7 @@ export default async function Publishers() {
         </div>
         <div className="panel" id="scoring">
           <header><h2>How we score</h2><span className="stamp">Kid tested · Teacher approved</span></header>
-          <div className="score">
+          <div className="scoreboard">
             <span>Classroom fit</span><span className="note">one class period, group of 4 to 6</span><div className="bar"><i style={{ width: '100%' }}></i></div>
             <span>Learning value</span><span className="note">a subject or skill, clearly</span><div className="bar"><i style={{ width: '100%' }}></i></div>
             <span>Kid panel</span><span className="note">fun, rules clarity, play again</span><div className="bar"><i style={{ width: '100%' }}></i></div>
@@ -47,6 +53,6 @@ export default async function Publishers() {
           <p className="note" style={{ marginTop: 10 }}>Already a publisher? <Link href="/signin">Sign in</Link>.</p>
         </div>
       </div>
-    </section>
+    </div></main>
   );
 }

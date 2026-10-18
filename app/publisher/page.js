@@ -9,7 +9,7 @@ export const metadata = { title: 'Publisher dashboard' };
 export default async function PublisherHome() {
   const { supabase, profile } = await getSession();
   const pub = await loadPublisher(supabase, profile);
-  if (!pub) return <section className="page"><Empty>No publisher record yet. <Link href="/publishers#apply">Apply to demo</Link> to create one.</Empty></section>;
+  if (!pub) return <main className="content gutter"><div className="wrap section"><Empty>No publisher record yet. <Link href="/publishers#apply">Apply to demo</Link> to create one.</Empty></div></main>;
   const [entries, { data: games }, { data: apps }] = await Promise.all([
     ledger(supabase, pub.id),
     supabase.from('games').select('*').eq('publisher_id', pub.id),
@@ -18,8 +18,9 @@ export default async function PublisherHome() {
   const b = balances(entries);
   const units = entries.filter(e => e.kind.endsWith('_sale')).length;
   return (
-    <section className="page">
-      <div><div className="eyebrow">{pub.orgs?.name}</div><h1>Dashboard</h1></div>
+    <main className="content gutter"><div className="wrap section">
+      <div><div className="kicker">{pub.orgs?.name}</div><h1>Dashboard</h1></div>
+      <p className="opening">{(apps || []).length ? `${apps.length} application${apps.length > 1 ? 's' : ''} in. ${money(b.ready)} ready to pay, ${money(b.waiting)} waiting on schools.` : 'No applications yet. Apply with a game and your scorecard lands here within a week of the demo.'}</p>
       <Stats items={[[money(b.paid + b.ready + b.waiting), 'Earned, lifetime'], [money(b.ready), 'Ready to pay'], [money(b.waiting), 'Waiting on school payment'], [(games || []).length, 'Games in catalog']]} />
       <div className="grid2">
         <div className="panel"><header><h2>Applications</h2><Link href="/publishers#apply" className="btn ghost">Apply with another game</Link></header>
@@ -31,6 +32,6 @@ export default async function PublisherHome() {
             {entries.slice(0, 6).map(e => <tr key={e.id}><td>{date(e.entry_date)}</td><td className="k">{e.description}</td><td><Status s={e.status} /></td></tr>)}
           </tbody></table></div> : <Empty>Sales, consignment statements, and payouts show up here once your first game is approved.</Empty>}</div>
       </div>
-    </section>
+    </div></main>
   );
 }

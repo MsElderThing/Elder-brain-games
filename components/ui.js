@@ -1,5 +1,5 @@
 export function Stats({ items }) {
-  return <div className="stats">{items.map(([n, l]) => <div className="stat" key={l}><div className="n">{n}</div><div className="l">{l}</div></div>)}</div>;
+  return <div className="bigs">{items.map(([n, l]) => <div key={l}><b>{n}</b><span>{l}</span></div>)}</div>;
 }
 
 export function Pill({ kind, children }) { return <span className={'pill' + (kind ? ' ' + kind : '')}>{children}</span>; }

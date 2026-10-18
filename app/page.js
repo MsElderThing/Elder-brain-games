@@ -1,49 +1,86 @@
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
-import Cover from '@/components/Cover';
+import { getSession } from '@/lib/supabase/server';
+import { GRADES, boxArt, ageText, KID_NOTES } from '@/lib/catalog';
 import { money } from '@/lib/roles';
+import AddButton from '@/components/AddButton';
 
 export default async function Home() {
-  const supabase = await createClient();
+  const { supabase, profile } = await getSession();
   const { data: games } = await supabase.from('games').select('*').eq('approved', true).order('score', { ascending: false, nullsFirst: false });
-  const shelf = (games || []).filter(g => !g.is_kit).slice(0, 3);
-  const kits = (games || []).filter(g => g.is_kit).slice(0, 3);
+  const all = games || [];
+  const pick = all.find(g => g.slug === 'cartographers-apprentice') || all[0];
+  const notes = pick ? KID_NOTES[pick.slug] || [] : [];
   return (
-    <section className="page">
-      <div className="thero">
-        <div className="top"><div className="eyebrow" style={{ fontSize: '.8rem' }}>Games for classrooms, libraries, and co-ops</div><span className="stamp" style={{ fontSize: '.75rem' }}>Kid tested · Teacher approved</span></div>
-        <div>
-          <h1>Games that teach.<span className="alt">played, scored, and picked by</span>kids and teachers.</h1>
-          <p>Every game we carry was demoed for our panel of teachers and kids. Each comes with a lesson plan, standards mapping, and a quote your office can approve.</p>
-          <div className="cta"><Link href="/catalog" className="btn">Browse the catalog</Link><Link href="/signup" className="btn ghost">Create an account</Link></div>
-          <div className="ticks" style={{ marginTop: 16 }}><span>Purchase orders welcome</span><span>Net 30 for schools</span><span>Tax-exempt friendly</span></div>
+    <main className="content gutter">
+      <div className="wrap" style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+        <section className="hero">
+          <img src="/img/hero.jpg" alt="" />
+          <span className="stamp">Kid tested · Teacher approved</span>
+          <div className="copy">
+            <h1>Games your students will beg to play again.</h1>
+            <p>Picked by teachers, scored by our kids, shipped with a lesson plan. Schools pay by purchase order.</p>
+            <div className="cta"><Link href="/catalog" className="btn">Shop by grade</Link><Link href="/for-schools" className="btn ghost">How quotes work</Link></div>
+          </div>
+        </section>
+        <div className="facts gutter" style={{ marginLeft: -18, marginRight: -18 }}>
+          <div className="row wrap">
+            <span><b>PO</b>Schools pay by purchase order, net 30.</span>
+            <span><b>Plan</b>Every game ships with a lesson plan.</span>
+            <span><b>Played</b>We played it first. Our kids scored it.</span>
+          </div>
         </div>
-        <div className="shelf">{shelf.map((g, i) => <Cover key={g.id} game={g} rotate={[-3, 2, -1][i]} />)}</div>
       </div>
 
-      <div className="grid2">
-        <div className="panel"><header><h2>How buying works</h2></header>
-          <div className="steps" style={{ gridTemplateColumns: '1fr', border: 0, background: 'none' }}>
-            <div className="step"><div className="num">1</div><b>Pick games</b>Filter by grade and subject. Every listing shows play time, group size, and what it teaches.</div>
-            <div className="step"><div className="num">2</div><b>Get a quote or buy now</b>Teachers and districts get a PO-ready quote with our W-9 attached. Individuals and co-ops check out with a card.</div>
-            <div className="step"><div className="num">3</div><b>We ship, you play</b>Lesson plans and standards maps land in your account the day you order.</div>
-          </div></div>
-        <div className="panel"><header><h2>Classroom kits</h2><span className="pill ok">Most popular</span></header>
-          <p>A game plus enough copies for small groups, a printed lesson plan, and standards mapping for math, ELA, or SEL. Built to survive 30 kids a day.</p>
-          <div className="tbl" style={{ marginTop: 12 }}><table><tbody>
-            {kits.map(k => <tr key={k.id}><td className="k">{k.title}</td><td>{k.teaches}</td><td className="r">{money(k.msrp)}</td></tr>)}
-          </tbody></table></div>
-          <div style={{ marginTop: 12 }}><Link href="/catalog?f=Kits" className="btn ghost">See all kits</Link></div></div>
-      </div>
+      <section className="wrap section">
+        <header><h2>Shop by grade</h2><span className="note">Teachers think in grades. So do we.</span></header>
+        <div className="grades">
+          {GRADES.map(g => (
+            <Link key={g.key} href={`/catalog?f=${encodeURIComponent(g.key)}`} className="grade">
+              <img src={g.img} alt="" />
+              <span>{g.label}<small>{g.sub}</small></span>
+            </Link>
+          ))}
+        </div>
+      </section>
 
-      <div className="panel"><header><h2>Who we work with</h2><span className="note">Each account type gets its own dashboard</span></header>
-        <div className="roles">
-          <Link href="/signup?role=teacher" className="role"><b>Teachers</b><span>Quotes, lesson plans, wishlists, PD hours</span></Link>
-          <Link href="/signup?role=district" className="role"><b>Districts and schools</b><span>Purchase orders, invoices, vendor paperwork</span></Link>
-          <Link href="/signup?role=nonprofit" className="role"><b>Libraries and non-profits</b><span>Lending libraries, program sessions, grant quotes</span></Link>
-          <Link href="/signup?role=individual" className="role"><b>Families and co-ops</b><span>Card checkout, co-op bundles, order history</span></Link>
-          <Link href="/publishers" className="role"><b>Publishers</b><span>Apply to demo, sales, payouts, conventions</span></Link>
-        </div></div>
-    </section>
+      {pick && (
+        <section className="wrap feature">
+          <div className="art"><img src={boxArt(pick)} alt={pick.title} /></div>
+          <div className="body">
+            <span className="kicker">Game of the month · October</span>
+            <h2>{pick.title}</h2>
+            <p>{pick.teaches}. {ageText(pick)}, {pick.play_minutes} minutes, {pick.players_min} to {pick.players_max} players. This is the one I hand a fifth-grade teacher first: it fits in a class period, the map pieces survive being dropped, and the fractions are load-bearing instead of decorative.</p>
+            <div className="score">
+              <span className="t">Kid panel · {pick.score} / 25</span>
+              {notes.map(([n, a, q]) => <span key={n} style={{ gridColumn: '1/-1' }}>{n}, {a}: “{q}”</span>)}
+            </div>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 18, flexWrap: 'wrap' }}>
+              <span className="price">{money(pick.msrp)}</span>
+              <AddButton game={pick} role={profile?.role} />
+              <Link href={`/games/${pick.slug}`} className="btn ghost sm">See the lesson plan</Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="wrap notecard">
+        <img src="/img/about.jpg" alt="Alex and Curtis" />
+        <div>
+          <span className="date">October 18, 2026 · from the kitchen table</span>
+          <h3>We're back from Gamehole Con, and the shelf is open.</h3>
+          <p>Elder Brain Games started because we homeschool and kept finding games that taught something real, then watched teacher friends have no way to buy them with school money. So we built the thing we wanted: a shop where every game has been played at our table, scored by our kids, and comes with a quote your office can approve. The first ten games are up. Publishers, we're recruiting. Teachers, tell us what you need for your room and we'll find it.</p>
+          <p className="sig">Alex and Curtis, Niles, Michigan</p>
+        </div>
+      </section>
+
+      <section className="wrap strip">
+        <span className="kicker">Who we work with</span>
+        <Link href="/signup?role=teacher">Teachers</Link>
+        <Link href="/signup?role=district">Districts and schools</Link>
+        <Link href="/signup?role=nonprofit">Libraries and non-profits</Link>
+        <Link href="/signup?role=individual">Families and co-ops</Link>
+        <Link href="/publishers">Publishers</Link>
+      </section>
+    </main>
   );
 }

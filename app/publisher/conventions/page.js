@@ -14,8 +14,8 @@ export default async function Conventions() {
   const mine = c => (signups || []).filter(s => s.convention_id === c.id);
   const today = new Date().toISOString().slice(0, 10);
   return (
-    <section className="page">
-      <div><div className="eyebrow">Where we'll be</div><h1>Conventions</h1><p className="note">Sign up for a demo slot, a table seat, or send stock on consignment. Ship-in instructions post here once you're confirmed.</p></div>
+    <main className="content gutter"><div className="wrap section">
+      <div><div className="kicker">Where we'll be</div><h1>Conventions</h1><p className="note">Sign up for a demo slot, a table seat, or send stock on consignment. Ship-in instructions post here once you're confirmed.</p></div>
       <div className="panel">
         {cons.map(c => {
           const d = new Date(c.starts_on + 'T12:00'); const open = !c.signup_opens || c.signup_opens <= today;
@@ -33,6 +33,6 @@ export default async function Conventions() {
         {(signups || []).filter(s => s.units_sent).length ? <div className="tbl"><table><thead><tr><th>Con</th><th className="r">Sent</th><th className="r">Sold</th><th className="r">Returned</th></tr></thead><tbody>
           {signups.filter(s => s.units_sent).map(s => <tr key={s.id}><td className="k">{s.conventions?.name}</td><td className="r">{s.units_sent}</td><td className="r">{s.units_sold}</td><td className="r">{s.units_returned}</td></tr>)}
         </tbody></table></div> : <Empty>Counts in, sold, and returned post here after each con, with a statement.</Empty>}</div>
-    </section>
+    </div></main>
   );
 }
