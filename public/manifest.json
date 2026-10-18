@@ -1,0 +1,10 @@
+{
+  "name": "Elder Brain Games",
+  "short_name": "Elder Brain",
+  "description": "Tabletop games for classrooms, libraries, and homeschool co-ops.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070807",
+  "theme_color": "#070807",
+  "icons": [{ "src": "/icon.png", "sizes": "512x512", "type": "image/png" }]
+}
