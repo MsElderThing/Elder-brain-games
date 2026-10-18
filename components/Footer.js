@@ -1,10 +1,11 @@
 import Link from 'next/link';
+import { PHOTOS } from '@/lib/site';
 
 export default function Footer() {
   return (
     <footer className="ftr gutter">
       <div className="row wrap">
-        <img className="us" src="/img/about.jpg" alt="Alex and Curtis" />
+        {PHOTOS.about ? <img className="us" src={PHOTOS.about} alt="Alex and Curtis" /> : <img className="mark" src="/logo.jpg" alt="" />}
         <div>
           <h3 style={{ color: 'var(--bone)' }}>Two people, one kitchen table, a lot of games.</h3>
           <p>We're Alex and Curtis. We homeschool, we run tabletop games for anyone who'll sit down, and we got tired of teachers having to guess which games would actually work in a classroom. So we play them first, our kids score them, and we ship the ones that earn it with a lesson plan. Niles, Michigan.</p>
@@ -15,7 +16,7 @@ export default function Footer() {
             <li><Link href="/catalog">Catalog</Link></li>
           </ul>
         </div>
-        <img className="mark" src="/logo.jpg" alt="" />
+        <div />
       </div>
     </footer>
   );

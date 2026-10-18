@@ -22,12 +22,6 @@ export default async function Publishers() {
         <div className="fine">{slots} demo slots open{next ? ` · next round: ${next.name}, ${new Date(next.starts_on).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : ''}</div>
       </div>
 
-      <div className="proof">
-        <img src="/img/con.jpg" alt="Our con table" />
-        <img src="/img/detail-board.jpg" alt="A demo in progress" />
-        <img src="/img/detail-cards.jpg" alt="Scorecards" />
-      </div>
-
       <div className="flow">
         <div><b>Apply</b><span>Game, ages, play time, MSRP, photos. Pick a slot.</span></div>
         <div><b>Demo</b><span>Video call, at our con table, or mail us a copy.</span></div>

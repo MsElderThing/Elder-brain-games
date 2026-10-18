@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { GRADES, SUBJECTS, matches, boxArt, ageText, playersText } from '@/lib/catalog';
+import { GRADES, SUBJECTS, matches, ageText, playersText } from '@/lib/catalog';
+import Art from '@/components/Art';
 import AddButton from '@/components/AddButton';
 import { money } from '@/lib/roles';
 
@@ -27,7 +28,7 @@ export default function Catalog({ games, initial, role }) {
         {list.map(g => (
           <div className="tile" key={g.id}>
             <Link href={`/games/${g.slug}`} className="art">
-              <img src={boxArt(g)} alt={g.title} />
+              <Art game={g} />
               {g.score >= 20 && <span className="seal">KID<br />TESTED</span>}
             </Link>
             <h3><Link href={`/games/${g.slug}`} style={{ color: 'inherit', textDecoration: 'none' }}>{g.title}</Link></h3>
@@ -35,7 +36,7 @@ export default function Catalog({ games, initial, role }) {
             <div className="buy"><span className="price">{money(g.msrp)}</span><AddButton game={g} role={role} small /></div>
           </div>
         ))}
-        {list.length === 0 && <p className="note">Nothing in this filter yet.</p>}
+        {list.length === 0 && <p className="note">Nothing here yet. The first approved games will show up as publishers come through the demo program.</p>}
       </div>
     </div>
   );

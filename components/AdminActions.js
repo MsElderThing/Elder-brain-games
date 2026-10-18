@@ -12,15 +12,21 @@ export default function AdminActions({ kind, id, status }) {
   }
   if (kind === 'app') return (
     <div style={{ display: 'flex', gap: 4 }}>
-      {status === 'submitted' && <button className="btn ghost" onClick={() => set('applications', { status: 'scheduled' }, 'Scheduled')}>Schedule</button>}
-      {status !== 'accepted' && status !== 'declined' && <button className="btn ghost" onClick={() => set('applications', { status: 'accepted' }, 'Accepted')}>Accept</button>}
-      {status !== 'declined' && status !== 'accepted' && <button className="btn ghost" onClick={() => set('applications', { status: 'declined' }, 'Declined')}>Decline</button>}
+      {status === 'submitted' && <button className="btn sm ghost" onClick={() => set('applications', { status: 'scheduled' }, 'Scheduled')}>Schedule</button>}
+      {status !== 'accepted' && status !== 'declined' && <button className="btn sm ghost" onClick={() => set('applications', { status: 'accepted' }, 'Accepted')}>Accept</button>}
+      {status !== 'declined' && status !== 'accepted' && <button className="btn sm ghost" onClick={() => set('applications', { status: 'declined' }, 'Declined')}>Decline</button>}
     </div>
   );
   if (kind === 'order') {
-    if (status === 'quote_sent' || status === 'approved' || status === 'po_received') return <button className="btn ghost" onClick={() => set('orders', { status: 'paid', paid_at: new Date().toISOString() }, 'Marked paid')}>Mark paid</button>;
-    if (status === 'paid') return <button className="btn ghost" onClick={() => set('orders', { status: 'shipped' }, 'Marked shipped')}>Shipped</button>;
-    if (status === 'shipped') return <button className="btn ghost" onClick={() => set('orders', { status: 'delivered' }, 'Marked delivered')}>Delivered</button>;
+    if (status === 'quote_sent' || status === 'approved' || status === 'po_received') return <button className="btn sm ghost" onClick={() => set('orders', { status: 'paid', paid_at: new Date().toISOString() }, 'Marked paid')}>Mark paid</button>;
+    if (status === 'paid') return <button className="btn sm ghost" onClick={() => set('orders', { status: 'shipped' }, 'Marked shipped')}>Shipped</button>;
+    if (status === 'shipped') return <button className="btn sm ghost" onClick={() => set('orders', { status: 'delivered' }, 'Marked delivered')}>Delivered</button>;
   }
+  if (kind === 'signup') return (
+    <div style={{ display: 'flex', gap: 4 }}>
+      <button className="btn sm ghost" onClick={() => set('con_signups', { status: 'confirmed' }, 'Confirmed')}>Confirm</button>
+      <button className="btn sm ghost" onClick={() => set('con_signups', { status: 'declined' }, 'Declined')}>Decline</button>
+    </div>
+  );
   return null;
 }

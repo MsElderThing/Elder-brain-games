@@ -1,6 +1,9 @@
 import Link from 'next/link';
 import { getSession } from '@/lib/supabase/server';
-import { GRADES, boxArt, ageText, KID_NOTES } from '@/lib/catalog';
+import { GRADES, ageText, panelNotes } from '@/lib/catalog';
+import Art from '@/components/Art';
+import Tentacles from '@/components/Tentacles';
+import { PHOTOS, NOTE } from '@/lib/site';
 import { money } from '@/lib/roles';
 import AddButton from '@/components/AddButton';
 
@@ -8,13 +11,13 @@ export default async function Home() {
   const { supabase, profile } = await getSession();
   const { data: games } = await supabase.from('games').select('*').eq('approved', true).order('score', { ascending: false, nullsFirst: false });
   const all = games || [];
-  const pick = all.find(g => g.slug === 'cartographers-apprentice') || all[0];
-  const notes = pick ? KID_NOTES[pick.slug] || [] : [];
+  const pick = all[0];
+  const notes = pick ? panelNotes(pick) : [];
   return (
     <main className="content gutter">
       <div className="wrap" style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
         <section className="hero">
-          <img src="/img/hero.jpg" alt="" />
+          {PHOTOS.hero ? <img src={PHOTOS.hero} alt="" /> : <Tentacles />}
           <span className="stamp">Kid tested · Teacher approved</span>
           <div className="copy">
             <h1>Games your students will beg to play again.</h1>
@@ -36,23 +39,36 @@ export default async function Home() {
         <div className="grades">
           {GRADES.map(g => (
             <Link key={g.key} href={`/catalog?f=${encodeURIComponent(g.key)}`} className="grade">
-              <img src={g.img} alt="" />
+              {PHOTOS.grades[g.key] ? <img src={PHOTOS.grades[g.key]} alt="" /> : <b className="big">{g.label}</b>}
               <span>{g.label}<small>{g.sub}</small></span>
             </Link>
           ))}
         </div>
       </section>
 
+      {!pick && (
+        <section className="wrap empty-shop">
+          <div>
+            <span className="kicker">The shelf, October 2026</span>
+            <h2>The first games are being played right now.</h2>
+            <p className="lede" style={{ marginTop: 10 }}>Every game we sell gets demoed at our table and scored by our kids before it goes up. The first round is in review. Leave your email and we'll tell you the day the shelf opens, or send us the game you wish your classroom had.</p>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <Link href="/signup?role=teacher" className="btn">Tell me when it opens</Link>
+            <Link href="/publishers" className="btn ghost">I make games</Link>
+          </div>
+        </section>
+      )}
       {pick && (
         <section className="wrap feature">
-          <div className="art"><img src={boxArt(pick)} alt={pick.title} /></div>
+          <div className="art"><Art game={pick} /></div>
           <div className="body">
-            <span className="kicker">Game of the month · October</span>
+            <span className="kicker">Top of the shelf</span>
             <h2>{pick.title}</h2>
-            <p>{pick.teaches}. {ageText(pick)}, {pick.play_minutes} minutes, {pick.players_min} to {pick.players_max} players. This is the one I hand a fifth-grade teacher first: it fits in a class period, the map pieces survive being dropped, and the fractions are load-bearing instead of decorative.</p>
+            <p>{pick.description || `${pick.teaches}. ${ageText(pick)}, ${pick.play_minutes} minutes, ${pick.players_min} to ${pick.players_max} players.`}</p>
             <div className="score">
               <span className="t">Kid panel · {pick.score} / 25</span>
-              {notes.map(([n, a, q]) => <span key={n} style={{ gridColumn: '1/-1' }}>{n}, {a}: “{q}”</span>)}
+              {notes.map((n, i) => <span key={i} style={{ gridColumn: '1/-1' }}>{n.name}{n.age ? `, ${n.age}` : ''}: “{n.quote}”</span>)}
             </div>
             <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 18, flexWrap: 'wrap' }}>
               <span className="price">{money(pick.msrp)}</span>
@@ -64,12 +80,12 @@ export default async function Home() {
       )}
 
       <section className="wrap notecard">
-        <img src="/img/about.jpg" alt="Alex and Curtis" />
+        <img src={PHOTOS.about || '/logo.jpg'} alt="Alex and Curtis" style={PHOTOS.about ? {} : { aspectRatio: '1', objectFit: 'contain', background: '#070807' }} />
         <div>
-          <span className="date">October 18, 2026 · from the kitchen table</span>
-          <h3>We're back from Gamehole Con, and the shelf is open.</h3>
-          <p>Elder Brain Games started because we homeschool and kept finding games that taught something real, then watched teacher friends have no way to buy them with school money. So we built the thing we wanted: a shop where every game has been played at our table, scored by our kids, and comes with a quote your office can approve. The first ten games are up. Publishers, we're recruiting. Teachers, tell us what you need for your room and we'll find it.</p>
-          <p className="sig">Alex and Curtis, Niles, Michigan</p>
+          <span className="date">{NOTE.date} · from the kitchen table</span>
+          <h3>{NOTE.title}</h3>
+          <p>{NOTE.body}</p>
+          <p className="sig">{NOTE.sig}</p>
         </div>
       </section>
 

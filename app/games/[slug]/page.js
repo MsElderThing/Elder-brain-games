@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getSession } from '@/lib/supabase/server';
-import { boxArt, ageText, playersText, KID_NOTES } from '@/lib/catalog';
+import { ageText, playersText, panelNotes } from '@/lib/catalog';
+import Art from '@/components/Art';
 import { money } from '@/lib/roles';
 import AddButton from '@/components/AddButton';
 
@@ -16,7 +17,7 @@ export default async function GamePage({ params }) {
   const { data: g } = await supabase.from('games').select('*, publishers(orgs(name), website)').eq('slug', slug).eq('approved', true).maybeSingle();
   if (!g) notFound();
   const { data: kits } = await supabase.from('games').select('*').eq('approved', true).eq('is_kit', true).ilike('teaches', `%${g.title.split(' ')[0]}%`);
-  const notes = KID_NOTES[g.slug] || [];
+  const notes = panelNotes(g);
   const role = profile?.role;
   return (
     <main className="content gutter">
@@ -24,12 +25,7 @@ export default async function GamePage({ params }) {
         <p className="note" style={{ marginBottom: 14 }}><Link href="/catalog">Catalog</Link> / {g.grade_bands?.[0]}</p>
         <div className="product">
           <div>
-            <div className="art"><img src={boxArt(g)} alt={g.title} /></div>
-            <div className="thumbs">
-              <img src="/img/detail-cards.jpg" alt="Components" />
-              <img src="/img/detail-board.jpg" alt="Mid-play" />
-              <img src="/img/detail-boxes.jpg" alt="Lesson plan" />
-            </div>
+            <div className="art"><Art game={g} /></div>
           </div>
           <div>
             <span className="kicker">{g.subjects?.join(' · ')} · {g.grade_bands?.join(', ')}</span>
@@ -60,7 +56,7 @@ export default async function GamePage({ params }) {
             {notes.length > 0 && (
               <div className="panelq">
                 <h3>What the kid panel said</h3>
-                {notes.map(([n, a, q]) => <div className="quote-kid" key={n}>“{q}” <b>{n}, {a}</b></div>)}
+                {notes.map((n, i) => <div className="quote-kid" key={i}>“{n.quote}” <b>{n.name}{n.age ? `, ${n.age}` : ''}</b></div>)}
               </div>
             )}
             <p className="note" style={{ marginTop: 16 }}>Published by {g.publishers?.orgs?.name || 'a small studio we met at a con'}. {g.dropship_available ? 'Ships from the publisher within three business days.' : 'Ships from our shelf.'}</p>
